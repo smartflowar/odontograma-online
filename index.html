@@ -4,26 +4,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Odontograma Online</title>
-<meta name="description" content="Odontograma online gratis: marcá caries, obturaciones, extracciones, coronas y endodoncias con un clic, armá el presupuesto y descargalo en PDF. Sin registrarte.">
+<meta name="description" content="Odontograma online gratis: marcá caries, obturaciones, extracciones, coronas y endodoncias con un clic, sumá prestaciones de ortodoncia, armá el presupuesto y descargalo en PDF. Sin registrarte.">
+<meta name="theme-color" content="#0E6B73">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,600..800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: ficha clínica — barra de herramientas fija arriba, odontograma ancho, debajo paciente + presupuesto en dos columnas */
+/* Layout: ficha clínica — herramientas, odontograma ancho, debajo paciente + presupuesto. En celular todo a una columna y cada diente se marca en una ventana ampliada */
 :root{
   --paper:#F5F8F9; --card:#FFFFFF; --ink:#13252E; --muted:#5A6F79; --line:#D3DEE2; --tooth:#FFFFFF; --tooth-line:#7E939C;
-  --red:#C9302C; --red-soft:#FBE7E6; --blue:#1F5FBF; --blue-soft:#E3ECFA; --accent:#0E6B73; --accent-ink:#FFFFFF; --sel:#F2C94C;
+  --red:#C9302C; --red-soft:#FBE7E6; --blue:#1F5FBF; --blue-soft:#E3ECFA; --accent:#0E6B73; --accent-ink:#FFFFFF; --sel:#F2C94C; --shade:rgba(10,22,28,.45);
   --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
   --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --paper:#0D171C; --card:#14222A; --ink:#E3ECEF; --muted:#90A6AF; --line:#27404B; --tooth:#1B2D36; --tooth-line:#7E98A3;
-  --red:#F2726C; --red-soft:#3A1F20; --blue:#6FA3F2; --blue-soft:#1A2B45; --accent:#4FC1C9; --accent-ink:#06262A; --sel:#E7B93A; color-scheme:dark}}
+  --red:#F2726C; --red-soft:#3A1F20; --blue:#6FA3F2; --blue-soft:#1A2B45; --accent:#4FC1C9; --accent-ink:#06262A; --sel:#E7B93A; --shade:rgba(0,0,0,.6); color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#0D171C; --card:#14222A; --ink:#E3ECEF; --muted:#90A6AF; --line:#27404B; --tooth:#1B2D36; --tooth-line:#7E98A3;
-  --red:#F2726C; --red-soft:#3A1F20; --blue:#6FA3F2; --blue-soft:#1A2B45; --accent:#4FC1C9; --accent-ink:#06262A; --sel:#E7B93A; color-scheme:dark}
+  --red:#F2726C; --red-soft:#3A1F20; --blue:#6FA3F2; --blue-soft:#1A2B45; --accent:#4FC1C9; --accent-ink:#06262A; --sel:#E7B93A; --shade:rgba(0,0,0,.6); color-scheme:dark}
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+.s,.tool,.btn{-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
 .wrap{max-width:1120px;margin:0 auto;display:grid;gap:20px}
@@ -38,33 +42,41 @@ header p{margin:0;color:var(--muted);max-width:64ch}
 /* herramientas */
 .tools{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
-.tool{font:inherit;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:7px 10px;cursor:pointer}
+.tool{font:inherit;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:7px 10px;cursor:pointer;min-height:38px}
 .tool[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);background:var(--card)}
 .tool svg{width:16px;height:16px;flex:none}
 .tools .sep{width:1px;align-self:stretch;background:var(--line);margin:0 2px}
 .tools .grp{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 4px}
 /* odontograma */
-.chart-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.chart{display:grid;gap:10px;min-width:760px;padding:4px 2px}
+.chart{display:grid;gap:10px;padding:4px 2px;--tw:44px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .half{display:flex;gap:4px;justify-content:flex-end}
 .half.l{justify-content:flex-start}
-.row.temp .half{gap:4px}
 .mid{height:1px;background:var(--line);margin:2px 0}
-.tooth{display:grid;justify-items:center;gap:2px;width:44px}
+.tooth{display:grid;justify-items:center;gap:2px;width:var(--tw)}
 .tooth .num{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
-.tooth svg{width:42px;height:42px;display:block;overflow:visible}
+.tooth svg{width:calc(var(--tw) - 2px);height:calc(var(--tw) - 2px);display:block;overflow:visible}
 .tooth .s{fill:var(--tooth);stroke:var(--tooth-line);stroke-width:1.2;cursor:pointer;transition:fill .12s}
 .tooth .s:hover{fill:var(--sel)}
-.tooth .s.r{fill:var(--red)} .tooth .s.b{fill:var(--blue)}
-.tooth .mark{pointer-events:none;fill:none;stroke-width:3.2;stroke-linecap:round}
-.tooth .mark.r{stroke:var(--red)} .tooth .mark.b{stroke:var(--blue)}
+.s.r{fill:var(--red)!important} .s.b{fill:var(--blue)!important}
+.mark{pointer-events:none;fill:none;stroke-width:3.2;stroke-linecap:round}
+.mark.r{stroke:var(--red)} .mark.b{stroke:var(--blue)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
 .legend b{font-weight:700}
 .legend .r{color:var(--red)} .legend .b{color:var(--blue)}
+/* ventana ampliada (celular) */
+.sheet{position:fixed;inset:0;z-index:20;background:var(--shade);display:flex;align-items:flex-end;justify-content:center}
+.sheet .box{background:var(--card);width:100%;max-width:460px;border-radius:16px 16px 0 0;padding:18px max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:grid;gap:12px;justify-items:center}
+.sheet h3{font-size:20px;justify-self:start}
+.sheet .big{width:min(240px,70vw);height:min(240px,70vw);overflow:visible}
+.sheet .big .s{fill:var(--tooth);stroke:var(--tooth-line);stroke-width:.7;cursor:pointer}
+.sheet .big text{font-family:var(--f-mono);font-size:5px;fill:var(--muted);pointer-events:none;text-anchor:middle;dominant-baseline:middle}
+.sheet .big .s.r+text,.sheet .big .s.b+text{fill:#fff}
+.sheet .tmode{justify-self:stretch;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.sheet .tmode .tool{justify-content:center}
+.sheet .btn{justify-self:stretch;justify-content:center}
 /* formularios */
 .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px;align-items:start}
-@media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .field{display:grid;gap:4px;min-width:0}
 .field.full{grid-column:1/-1}
@@ -72,27 +84,33 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 input,select,textarea{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
 textarea{resize:vertical;min-height:70px}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.tbl{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
-th{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
-td.num,th.num{text-align:right;white-space:nowrap}
+/* presupuesto */
+.items{display:grid}
+.item{display:grid;grid-template-columns:52px minmax(0,1fr) 120px 30px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.item.head{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:0}
+.item .pz{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.item .tx{min-width:0;overflow-wrap:anywhere}
+.item input{padding:7px 8px}
+.item input.price{text-align:right;font-family:var(--f-mono)}
+.item .head-r{text-align:right}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:10.5px;border-radius:999px;padding:1px 7px;background:var(--red-soft);color:var(--red);margin-left:6px;vertical-align:1px}
+.empty{color:var(--muted);font-size:14px;padding:10px 0}
 .money{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-td input.price{width:110px;text-align:right;font-family:var(--f-mono);padding:6px 8px}
-.pill{display:inline-block;font-family:var(--f-mono);font-size:11px;border-radius:999px;padding:2px 8px;white-space:nowrap}
-.pill.r{background:var(--red-soft);color:var(--red)} .pill.b{background:var(--blue-soft);color:var(--blue)}
+.add{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
 .total{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:2px solid var(--ink);padding-top:10px}
 .total .big{font-family:var(--f-display);font-weight:800;font-size:30px;font-variant-numeric:tabular-nums}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
-.btn{font:inherit;font-weight:700;font-size:14px;border-radius:9px;padding:10px 14px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn{font:inherit;font-weight:700;font-size:14px;border-radius:9px;padding:10px 14px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px}
 .btn.ghost{background:transparent;color:var(--accent)}
-.btn.small{font-size:13px;padding:6px 10px}
-.x{font:inherit;border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:2px 6px}
+.btn.small{font-size:13px;padding:6px 10px;min-height:34px}
+.x{font:inherit;border:0;background:none;color:var(--muted);cursor:pointer;font-size:22px;line-height:1;padding:4px;min-width:30px;min-height:34px}
 .status{font-size:13px;color:var(--muted);min-height:1.2em}
 .confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;background:var(--red-soft);border-radius:9px;padding:10px}
-.empty{color:var(--muted);font-size:14px;padding:10px 0}
-details.aranceles summary{cursor:pointer;font-weight:700;font-size:14px}
-details.aranceles .fields{margin-top:10px}
+details.aranceles summary{cursor:pointer;font-weight:700;font-size:14px;padding:6px 0}
+details.aranceles .ar{display:grid;gap:8px;margin-top:8px}
+details.aranceles .arrow{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:10px;align-items:center;font-size:14px}
+details.aranceles .arrow input{text-align:right;font-family:var(--f-mono);padding:7px 8px}
+details.aranceles h4{margin:8px 0 0;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
 .cafe{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
 article{display:grid;gap:8px;max-width:72ch}
 article h2{font-size:22px;margin-top:10px}
@@ -100,10 +118,32 @@ article h3{font-size:16px;margin-top:6px}
 article p{margin:0}
 footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
 [hidden]{display:none!important}
-.swipe{display:none}
-@media (max-width:820px){.tools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}.tool{white-space:nowrap;flex:none}.swipe{display:block}}
+@media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (min-width:701px){.chart{min-width:760px}.chart-wrap{overflow-x:auto}}
+/* celular */
+@media (max-width:700px){
+  body{padding-block:16px 40px;font-size:16px}
+  input,select,textarea{font-size:16px}
+  .panel{padding:14px}
+  .tools{position:static;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px}
+  .tools .grp,.tools .sep{display:none}
+  .tool{font-size:13px;padding:6px 6px;justify-content:center;text-align:center;line-height:1.15;min-height:44px}
+  .chart{--tw:min(44px,calc((100vw - 32px - 28px - 4px - 21px) / 8));gap:6px}
+  .row{grid-template-columns:1fr;gap:6px}
+  .half,.half.l{justify-content:center;gap:3px}
+  .mid{margin:4px 0}
+  .tooth .num{font-size:10px}
+  .fields{grid-template-columns:1fr}
+  .item{grid-template-columns:minmax(0,1fr) 112px 30px;grid-template-areas:"pz pz x" "tx pr x";row-gap:4px}
+  .item .pz{grid-area:pz;font-size:12px;color:var(--muted)}
+  .item .tx{grid-area:tx}
+  .item .pr{grid-area:pr}
+  .item .xx{grid-area:x}
+  .item.head{display:none}
+  .btns .btn{flex:1 1 100%}
+  .total .big{font-size:28px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-@media (max-width:520px){.fields{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -112,27 +152,26 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
   <header>
     <span class="brand">Ficha odontológica</span>
     <h1>Odontograma online</h1>
-    <p>Tocá una cara del diente para marcarla. Rojo es lo que hay que hacer, azul lo que ya está hecho. El presupuesto se arma solo y lo descargás en PDF. Gratis, sin registrarte: los datos quedan solo en tu dispositivo.</p>
+    <p>Tocá un diente para marcarlo. Rojo es lo que hay que hacer, azul lo que ya está hecho. El presupuesto se arma solo y lo descargás en PDF. Gratis y sin registrarte.</p>
   </header>
 
   <div class="tools" id="tools" role="toolbar" aria-label="Herramientas del odontograma">
     <span class="grp">Caras</span>
-    <button class="tool" data-t="caries" aria-pressed="true"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2" fill="var(--red)"/></svg>Caries</button>
-    <button class="tool" data-t="obt" aria-pressed="false"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2" fill="var(--blue)"/></svg>Obturación existente</button>
+    <button class="tool" type="button" data-t="caries" aria-pressed="true"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2" fill="var(--red)"/></svg>Caries</button>
+    <button class="tool" type="button" data-t="obt" aria-pressed="false"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2" fill="var(--blue)"/></svg>Obturación existente</button>
     <span class="sep" aria-hidden="true"></span>
     <span class="grp">Pieza</span>
-    <button class="tool" data-t="ext" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="var(--red)" stroke-width="2.4" stroke-linecap="round"/></svg>Extracción</button>
-    <button class="tool" data-t="aus" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="var(--blue)" stroke-width="2.4" stroke-linecap="round"/></svg>Ausente</button>
-    <button class="tool" data-t="cor" aria-pressed="false"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="var(--red)" stroke-width="2.2"/></svg>Corona</button>
-    <button class="tool" data-t="core" aria-pressed="false"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="var(--blue)" stroke-width="2.2"/></svg>Corona existente</button>
-    <button class="tool" data-t="endo" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M8 1v14" stroke="var(--red)" stroke-width="2.4" stroke-linecap="round"/></svg>Endodoncia</button>
-    <button class="tool" data-t="endoe" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M8 1v14" stroke="var(--blue)" stroke-width="2.4" stroke-linecap="round"/></svg>Endodoncia realizada</button>
+    <button class="tool" type="button" data-t="ext" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="var(--red)" stroke-width="2.4" stroke-linecap="round"/></svg>Extracción</button>
+    <button class="tool" type="button" data-t="aus" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="var(--blue)" stroke-width="2.4" stroke-linecap="round"/></svg>Ausente</button>
+    <button class="tool" type="button" data-t="cor" aria-pressed="false"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="var(--red)" stroke-width="2.2"/></svg>Corona</button>
+    <button class="tool" type="button" data-t="core" aria-pressed="false"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="var(--blue)" stroke-width="2.2"/></svg>Corona existente</button>
+    <button class="tool" type="button" data-t="endo" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M8 1v14" stroke="var(--red)" stroke-width="2.4" stroke-linecap="round"/></svg>Endodoncia</button>
+    <button class="tool" type="button" data-t="endoe" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M8 1v14" stroke="var(--blue)" stroke-width="2.4" stroke-linecap="round"/></svg>Endodoncia realizada</button>
     <span class="sep" aria-hidden="true"></span>
-    <button class="tool" data-t="borrar" aria-pressed="false"><svg viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" rx="2" fill="none" stroke="var(--muted)" stroke-width="1.6"/></svg>Borrar</button>
+    <button class="tool" type="button" data-t="borrar" aria-pressed="false"><svg viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="11" height="11" rx="2" fill="none" stroke="var(--muted)" stroke-width="1.6"/></svg>Borrar</button>
   </div>
 
   <section class="panel" aria-label="Odontograma">
-    <p class="hint swipe">Deslizá el odontograma hacia los costados para ver todas las piezas.</p>
     <div class="chart-wrap"><div class="chart" id="chart"></div></div>
     <div class="legend">
       <span><b class="r">Rojo</b>: a realizar</span><span><b class="b">Azul</b>: existente o realizado</span>
@@ -145,7 +184,7 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
       <div class="label">Paciente</div>
       <div class="fields">
         <div class="field full"><label for="pac">Nombre y apellido</label><input id="pac" placeholder="Ej. Laura Gómez"></div>
-        <div class="field"><label for="hc">N° de historia clínica</label><input id="hc" placeholder="Ej. 1532"></div>
+        <div class="field"><label for="hc">N° de historia clínica</label><input id="hc" inputmode="numeric" placeholder="Ej. 1532"></div>
         <div class="field"><label for="fecha">Fecha</label><input id="fecha" type="date"></div>
         <div class="field"><label for="os">Obra social / prepaga</label><input id="os" placeholder="Ej. OSDE 210"></div>
         <div class="field"><label for="afil">N° de afiliado</label><input id="afil"></div>
@@ -157,25 +196,25 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
         <div class="field"><label for="mat">Matrícula</label><input id="mat" placeholder="Ej. MP 4521"></div>
         <div class="field full"><label for="cons">Consultorio (dirección y teléfono)</label><input id="cons" placeholder="Ej. San Martín 840, Córdoba · 351 555-0102"></div>
       </div>
-      <p class="hint">Tus datos de profesional y tus aranceles se recuerdan para el próximo paciente.</p>
+      <p class="hint">Tus datos de profesional y tus aranceles quedan guardados en este dispositivo. Los datos del paciente no se guardan.</p>
     </section>
 
     <section class="panel" aria-label="Presupuesto">
       <div class="label">Presupuesto</div>
-      <div class="tbl"><table>
-        <thead><tr><th>Pieza</th><th>Prestación</th><th class="num">Importe</th><th></th></tr></thead>
-        <tbody id="items"></tbody>
-      </table></div>
-      <div class="btns"><button class="btn ghost small" type="button" id="addItem">+ Agregar prestación</button></div>
+      <div class="items" id="items"></div>
+      <div class="add">
+        <label for="addSel" class="hint">Agregar prestación</label>
+        <select id="addSel"></select>
+      </div>
       <div class="total"><span class="label">Total</span><span class="big money" id="total">$ 0</span></div>
       <details class="aranceles">
         <summary>Mis aranceles</summary>
-        <div class="fields" id="aranceles"></div>
-        <p class="hint">Se usan para completar el importe de cada prestación nueva. Podés cambiar cada importe en la tabla.</p>
+        <div class="ar" id="aranceles"></div>
+        <p class="hint" style="margin-top:8px">Se usan para completar el importe de cada prestación nueva. Podés cambiar cada importe en el presupuesto.</p>
       </details>
       <div class="btns">
         <button class="btn" type="button" id="pdf">Descargar PDF</button>
-        <button class="btn ghost" type="button" id="wa">Copiar para WhatsApp</button>
+        <button class="btn ghost" type="button" id="copiar">Copiar presupuesto</button>
         <button class="btn ghost" type="button" id="nuevo">Nuevo paciente</button>
       </div>
       <div id="confirmBox" hidden class="confirm"><span>¿Borrar el odontograma y los datos de este paciente?</span><button class="btn small" type="button" id="siNuevo">Sí, borrar</button><button class="btn ghost small" type="button" id="noNuevo">Cancelar</button></div>
@@ -190,16 +229,32 @@ footer{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padd
 
   <article>
     <h2>Cómo usar el odontograma</h2>
-    <p>Elegí una herramienta arriba y tocá el diente. Caries y obturación se marcan por cara: las cinco caras de cada pieza se pueden marcar por separado. Extracción, ausente, corona y endodoncia se marcan sobre la pieza entera. Volver a tocar con la misma herramienta quita la marca.</p>
+    <p>Elegí una herramienta arriba y tocá el diente. Caries y obturación se marcan por cara: las cinco caras de cada pieza se pueden marcar por separado. En el celular, al tocar un diente se abre ampliado para marcar cada cara con comodidad. Extracción, ausente, corona y endodoncia se marcan sobre la pieza entera. Volver a tocar con la misma herramienta quita la marca.</p>
+    <h3>Presupuesto automático</h3>
+    <p>Cada marca en rojo suma su prestación. Las obturaciones se cobran según la cantidad de caras: simple (1 cara), compuesta (2 caras) o compleja (3 caras o más). Las prestaciones de ortodoncia y la consulta de control se agregan desde "Agregar prestación".</p>
     <h3>Convención de colores</h3>
     <p>Se usa la convención habitual en Argentina: en rojo lo que el paciente necesita (caries, extracción indicada, corona o endodoncia a realizar) y en azul lo que ya tiene hecho o lo que falta (obturaciones, coronas, endodoncias existentes y piezas ausentes).</p>
     <h3>Notación</h3>
     <p>Las piezas se numeran con el sistema FDI de dos dígitos: el primero indica el cuadrante (1 a 4 en dentición permanente, 5 a 8 en temporaria) y el segundo la pieza, contando desde la línea media.</p>
     <h3>¿Dónde se guardan los datos?</h3>
-    <p>En ningún servidor. Todo queda en el navegador de tu dispositivo. Al tocar "Nuevo paciente" se borra el odontograma y quedan guardados solo tus datos de profesional y tus aranceles.</p>
+    <p>En ningún servidor. Tus datos de profesional y tus aranceles quedan en el navegador de tu dispositivo para la próxima vez. La ficha de cada paciente arranca siempre vacía y no se guarda: descargá el PDF antes de cerrar.</p>
   </article>
 
   <footer>Herramienta gratuita de uso informativo. No reemplaza la historia clínica oficial ni los formularios de cada obra social.</footer>
+</div>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="box">
+    <h3 id="sheetTitle">Pieza</h3>
+    <div class="tmode" id="tmode">
+      <button class="tool" type="button" data-m="caries" aria-pressed="true">Caries</button>
+      <button class="tool" type="button" data-m="obt" aria-pressed="false">Obturación existente</button>
+      <button class="tool" type="button" data-m="borrar" aria-pressed="false">Borrar cara</button>
+    </div>
+    <svg class="big" id="bigTooth" viewBox="-1 -1 42 42"></svg>
+    <p class="hint">Tocá cada cara para marcarla.</p>
+    <button class="btn" type="button" id="sheetOk">Listo</button>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -215,52 +270,58 @@ const ROWS=[
   {cls:"perm",l:[48,47,46,45,44,43,42,41],r:[31,32,33,34,35,36,37,38]}
 ];
 const TOOLS={
-  caries:{face:true,c:"r",label:"Obturación (caries)",key:"obt"},
-  obt:{face:true,c:"b"},
-  ext:{whole:"x",c:"r",label:"Extracción",key:"ext"},
-  aus:{whole:"x",c:"b"},
-  cor:{whole:"o",c:"r",label:"Corona",key:"cor"},
-  core:{whole:"o",c:"b"},
-  endo:{whole:"e",c:"r",key:"endo"},
-  endoe:{whole:"e",c:"b"}
+  caries:{face:true,c:"r"}, obt:{face:true,c:"b"},
+  ext:{whole:"x",c:"r"}, aus:{whole:"x",c:"b"},
+  cor:{whole:"o",c:"r"}, core:{whole:"o",c:"b"},
+  endo:{whole:"e",c:"r"}, endoe:{whole:"e",c:"b"}
 };
-const ARANCEL_DEF=[["obt","Obturación (por pieza)",45000],["ext","Extracción",55000],["cor","Corona",280000],["endo1","Endodoncia unirradicular",160000],["endo2","Endodoncia multirradicular",230000],["consulta","Consulta y diagnóstico",25000]];
-const multirradicular=n=>{const q=Math.floor(n/10),p=n%10; if(q>=5) return p>=4; return p>=6 || (q===1||q===2)&&p===4;};
+/* aranceles predeterminados (pesos argentinos) */
+const ARANCEL_DEF=[
+  ["Odontología general",[
+    ["obt1","Obturación simple (1 cara)",45000],
+    ["obt2","Obturación compuesta (2 caras)",53000],
+    ["obt3","Obturación compleja (3 caras o más)",60000],
+    ["ext","Extracción",100000],
+    ["endo","Endodoncia",160000],
+    ["cor","Corona",280000],
+    ["control","Consulta de control",49000]]],
+  ["Ortodoncia",[
+    ["brqEst","Reposición de bracket estético",47000],
+    ["brqMet","Reposición de bracket metálico",38000],
+    ["brqLf","Reposición de bracket low friction",43000],
+    ["arcoRed","Reposición de arco redondo",16000],
+    ["arcoCua","Reposición de arco cuadrado",20000],
+    ["arcoRec","Reposición de arco rectangular",24000],
+    ["tubo1","Reposición de tubo primer molar",42000],
+    ["tubo2","Reposición de tubo segundo molar",40000]]]
+];
+const ARANCELES=ARANCEL_DEF.flatMap(g=>g[1]);
+const NOMBRE=Object.fromEntries(ARANCELES.map(([k,l])=>[k,l]));
 const anterior=n=>(n%10)<=3;
 const superior=n=>[1,2,5,6].includes(Math.floor(n/10));
 const izqPantalla=n=>[1,4,5,8].includes(Math.floor(n/10)); // en pantalla a la izquierda: su mesial queda a la derecha
+const movil=()=>window.matchMedia("(max-width:700px)").matches;
 
-let tool="caries";
+let tool="caries", sheetTooth=null, sheetMode="caries";
 let S=fresh();
-function fresh(){return {teeth:{},extra:[],precios:{},datos:{}};}
-let A={}; // aranceles
-let prof={};
+function fresh(){return {teeth:{},extra:[],precios:{},datos:{fecha:hoy()}};}
+let A={}, prof={};
 
-/* ── guardado local ── */
+/* ── guardado: solo profesional y aranceles; la ficha siempre arranca vacía ── */
 function save(){try{
-  localStorage.setItem("odonto-ficha",JSON.stringify(S));
-  localStorage.setItem("odonto-aranceles",JSON.stringify(A));
+  localStorage.setItem("odonto-aranceles-v2",JSON.stringify(A));
   localStorage.setItem("odonto-prof",JSON.stringify(prof));
 }catch(e){}}
 function load(){
-  try{const s=JSON.parse(localStorage.getItem("odonto-ficha")||"null"); if(s&&s.teeth) S=Object.assign(fresh(),s);}catch(e){}
-  try{A=JSON.parse(localStorage.getItem("odonto-aranceles")||"{}")||{};}catch(e){A={};}
+  try{A=JSON.parse(localStorage.getItem("odonto-aranceles-v2")||"{}")||{};}catch(e){A={};}
   try{prof=JSON.parse(localStorage.getItem("odonto-prof")||"{}")||{};}catch(e){prof={};}
-  ARANCEL_DEF.forEach(([k,,v])=>{if(typeof A[k]!=="number")A[k]=v;});
-  if(!localStorage.getItem || !hasSaved()) ejemplo();
-}
-function hasSaved(){try{return !!localStorage.getItem("odonto-ficha");}catch(e){return false;}}
-function ejemplo(){ // ficha de ejemplo para que la herramienta se vea en uso
-  S=fresh();
-  S.teeth={16:{f:{O:"r",M:"r"}},26:{f:{O:"b"}},36:{w:{e:"r"},f:{O:"r",D:"r"}},46:{w:{x:"b"}},48:{w:{x:"r"}},11:{w:{o:"b"}},24:{f:{O:"b",M:"b"}}};
-  S.datos={pac:"Paciente de ejemplo",fecha:hoy(),obs:"Ficha de ejemplo: tocá \"Nuevo paciente\" para empezar."};
-  S.extra=[{pieza:"",txt:"Consulta y diagnóstico",imp:null,k:"consulta"}];
+  ARANCELES.forEach(([k,,v])=>{if(typeof A[k]!=="number")A[k]=v;});
+  try{localStorage.removeItem("odonto-ficha");localStorage.removeItem("odonto-aranceles");}catch(e){}
 }
 function hoy(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 
 /* ── dibujo de cada pieza ── */
 function caras(n){
-  // devuelve el nombre de cada zona geométrica: top, bottom, left, right, center
   const sup=superior(n), m=izqPantalla(n)?"right":"left";
   const map={center:anterior(n)?"I":"O"};
   map[sup?"top":"bottom"]="V";
@@ -269,15 +330,17 @@ function caras(n){
   return map;
 }
 const POLY={top:"0,0 40,0 28,12 12,12",bottom:"12,28 28,28 40,40 0,40",left:"0,0 12,12 12,28 0,40",right:"40,0 40,40 28,28 28,12",center:"12,12 28,12 28,28 12,28"};
-function toothSVG(n){
+const LBL={top:[20,6],bottom:[20,34],left:[6,20],right:[34,20],center:[20,20]};
+function toothInner(n,labels){
   const t=S.teeth[n]||{}, f=t.f||{}, w=t.w||{}, map=caras(n);
-  let s='<svg viewBox="-1 -1 42 42" aria-hidden="true">';
-  for(const z in POLY){const c=map[z]; s+='<polygon class="s '+(f[c]||"")+'" data-n="'+n+'" data-c="'+c+'" points="'+POLY[z]+'"><title>'+n+' '+c+'</title></polygon>';}
+  let s="";
+  for(const z in POLY){const c=map[z]; s+='<polygon class="s '+(f[c]||"")+'" data-n="'+n+'" data-c="'+c+'" points="'+POLY[z]+'"><title>'+n+' '+c+'</title></polygon>'; if(labels)s+='<text x="'+LBL[z][0]+'" y="'+LBL[z][1]+'">'+c+'</text>';}
   if(w.e) s+='<path class="mark '+w.e+'" d="M20 -4V44"/>';
   if(w.o) s+='<circle class="mark '+w.o+'" cx="20" cy="20" r="23"/>';
   if(w.x) s+='<path class="mark '+w.x+'" d="M-2 -2L42 42M42 -2L-2 42"/>';
-  return s+'</svg>';
+  return s;
 }
+function toothSVG(n){return '<svg viewBox="-1 -1 42 42" aria-hidden="true">'+toothInner(n,false)+'</svg>';}
 function drawChart(){
   const ch=$("chart"); ch.innerHTML="";
   ROWS.forEach(r=>{
@@ -296,100 +359,143 @@ function drawChart(){
     ch.appendChild(row);
   });
 }
-function redrawTooth(n){const el=document.querySelector('.tooth[data-n="'+n+'"]'); if(!el)return; const svg=el.querySelector("svg"); svg.outerHTML=toothSVG(n);}
+function redrawTooth(n){const el=document.querySelector('.tooth[data-n="'+n+'"]'); if(el) el.querySelector("svg").outerHTML=toothSVG(n); if(sheetTooth===n) $("bigTooth").innerHTML=toothInner(n,true);}
 
-function aplicar(n,c){
-  const t=S.teeth[n]||(S.teeth[n]={f:{},w:{}}); t.f=t.f||{}; t.w=t.w||{};
-  if(tool==="borrar"){delete S.teeth[n];}
-  else{
-    const T=TOOLS[tool];
-    if(T.face){ t.f[c]=t.f[c]===T.c?undefined:T.c; if(!t.f[c])delete t.f[c]; }
-    else{ const k=T.whole; t.w[k]=t.w[k]===T.c?undefined:T.c; if(!t.w[k])delete t.w[k];
-      if(k==="x"&&t.w.x){delete t.w.o;delete t.w.e;t.f={};} }
-    if(!Object.keys(t.f).length&&!Object.keys(t.w).length)delete S.teeth[n];
-  }
-  redrawTooth(n); renderItems(); save();
+function marcarCara(n,c,t){ // t: caries | obt | borrar
+  const d=S.teeth[n]||(S.teeth[n]={f:{},w:{}}); d.f=d.f||{}; d.w=d.w||{};
+  if(t==="borrar") delete d.f[c];
+  else { const col=TOOLS[t].c; if(d.f[c]===col) delete d.f[c]; else d.f[c]=col; if(d.w.x){delete d.w.x;} }
+  limpiar(n);
 }
+function marcarPieza(n,t){
+  if(t==="borrar"){delete S.teeth[n];return;}
+  const d=S.teeth[n]||(S.teeth[n]={f:{},w:{}}); d.f=d.f||{}; d.w=d.w||{};
+  const T=TOOLS[t], k=T.whole;
+  if(d.w[k]===T.c) delete d.w[k]; else d.w[k]=T.c;
+  if(k==="x"&&d.w.x){delete d.w.o;delete d.w.e;d.f={};}
+  limpiar(n);
+}
+function limpiar(n){const d=S.teeth[n]; if(d&&!Object.keys(d.f||{}).length&&!Object.keys(d.w||{}).length)delete S.teeth[n];}
+function cambio(n){redrawTooth(n); renderItems();}
+
+/* clic en el odontograma */
+$("chart").addEventListener("click",e=>{
+  const p=e.target.closest(".s"); if(!p)return;
+  const n=+p.dataset.n, c=p.dataset.c;
+  if(movil()&&(TOOLS[tool]&&TOOLS[tool].face)){abrirSheet(n);return;}
+  if(TOOLS[tool]&&TOOLS[tool].face) marcarCara(n,c,tool);
+  else marcarPieza(n,tool);
+  cambio(n);
+});
+/* ventana ampliada para celular */
+function abrirSheet(n){
+  sheetTooth=n; sheetMode=tool;
+  document.querySelectorAll("#tmode .tool").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===sheetMode));
+  $("sheetTitle").textContent="Pieza "+n;
+  $("bigTooth").innerHTML=toothInner(n,true);
+  $("sheet").hidden=false; document.body.style.overflow="hidden";
+}
+function cerrarSheet(){ $("sheet").hidden=true; document.body.style.overflow=""; sheetTooth=null; }
+$("bigTooth").addEventListener("click",e=>{const p=e.target.closest(".s"); if(!p||sheetTooth===null)return; marcarCara(sheetTooth,p.dataset.c,sheetMode); cambio(sheetTooth);});
+document.querySelectorAll("#tmode .tool").forEach(b=>b.addEventListener("click",()=>{sheetMode=b.dataset.m;document.querySelectorAll("#tmode .tool").forEach(x=>x.setAttribute("aria-pressed",x===b));}));
+$("sheetOk").addEventListener("click",cerrarSheet);
+$("sheet").addEventListener("click",e=>{if(e.target===$("sheet"))cerrarSheet();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("sheet").hidden)cerrarSheet();});
 
 /* ── prestaciones a partir del odontograma ── */
 function autoItems(){
   const out=[];
   Object.keys(S.teeth).map(Number).sort((a,b)=>a-b).forEach(n=>{
     const t=S.teeth[n], f=t.f||{}, w=t.w||{};
-    if(w.x==="r"){out.push({id:n+"-ext",pieza:n,txt:"Extracción",k:"ext"});return;}
+    if(w.x==="r"){out.push({id:n+"-ext",pieza:n,k:"ext"});return;}
     if(w.x==="b")return;
-    const rc=Object.keys(f).filter(c=>f[c]==="r");
-    if(w.e==="r"){const mr=multirradicular(n); out.push({id:n+"-endo",pieza:n,txt:"Endodoncia "+(mr?"multirradicular":"unirradicular"),k:mr?"endo2":"endo1"});}
-    if(w.o==="r") out.push({id:n+"-cor",pieza:n,txt:"Corona",k:"cor"});
-    else if(rc.length) out.push({id:n+"-obt",pieza:n,txt:"Obturación ("+ordenCaras(rc).join(", ")+")",k:"obt"});
+    const rc=Object.keys(f).filter(c=>f[c]==="r").length;
+    if(w.e==="r") out.push({id:n+"-endo",pieza:n,k:"endo"});
+    if(w.o==="r") out.push({id:n+"-cor",pieza:n,k:"cor"});
+    else if(rc) out.push({id:n+"-obt",pieza:n,k:rc>=3?"obt3":rc===2?"obt2":"obt1"});
   });
   return out;
 }
-function ordenCaras(a){const o=["O","I","M","D","V","P","L"];return a.slice().sort((x,y)=>o.indexOf(x)-o.indexOf(y));}
-function precio(it){ if(typeof S.precios[it.id]==="number")return S.precios[it.id]; return A[it.k]||0; }
 function money(v){return "$ "+Math.round(v||0).toLocaleString("es-AR");}
 function parseMoney(s){s=String(s||"").replace(/[^\d,.-]/g,""); if(s.includes(","))s=s.replace(/\./g,"").replace(",","."); else s=s.replace(/\.(?=\d{3}(\D|$))/g,""); const v=parseFloat(s); return isFinite(v)?v:0;}
 function allItems(){
-  const a=autoItems().map(it=>Object.assign({auto:true,imp:precio(it)},it));
+  const a=autoItems().map(it=>Object.assign({auto:true,txt:NOMBRE[it.k],imp:typeof S.precios[it.id+"|"+it.k]==="number"?S.precios[it.id+"|"+it.k]:A[it.k]},it));
   const b=S.extra.map((e,i)=>({id:"x"+i,i,pieza:e.pieza,txt:e.txt,imp:typeof e.imp==="number"?e.imp:(A[e.k]||0),extra:true}));
   return a.concat(b);
 }
 function renderItems(){
-  const tb=$("items"); tb.innerHTML=""; const items=allItems(); let tot=0;
-  if(!items.length){const tr=document.createElement("tr");tr.innerHTML='<td colspan="4" class="empty">Marcá en rojo lo que hay que hacer y la prestación aparece acá.</td>';tb.appendChild(tr);}
+  const box=$("items"); box.innerHTML=""; const items=allItems(); let tot=0;
+  if(!items.length){box.innerHTML='<div class="empty">Marcá en rojo lo que hay que hacer en el odontograma, o agregá una prestación de la lista.</div>';}
+  else{const h=document.createElement("div");h.className="item head";h.innerHTML='<span>Pieza</span><span>Prestación</span><span class="head-r">Importe</span><span></span>';box.appendChild(h);}
   items.forEach(it=>{
     tot+=it.imp||0;
-    const tr=document.createElement("tr");
+    const row=document.createElement("div"); row.className="item";
     if(it.extra){
-      tr.innerHTML='<td><input aria-label="Pieza" style="width:56px;padding:6px" value=""></td><td><input aria-label="Prestación" value=""></td><td class="num"><input class="price" inputmode="numeric" aria-label="Importe"></td><td><button class="x" type="button" aria-label="Quitar">×</button></td>';
-      const [p,t]=tr.querySelectorAll("input"); p.value=it.pieza||""; t.value=it.txt||"";
-      p.addEventListener("input",()=>{S.extra[it.i].pieza=p.value;save();});
-      t.addEventListener("input",()=>{S.extra[it.i].txt=t.value;save();});
-      tr.querySelector("button").addEventListener("click",()=>{S.extra.splice(it.i,1);renderItems();save();});
+      row.innerHTML='<span class="pz"><input aria-label="Pieza" inputmode="numeric" placeholder="Pieza"></span><span class="tx"><input aria-label="Prestación" placeholder="Prestación"></span><span class="pr"><input class="price" inputmode="numeric" aria-label="Importe"></span><span class="xx"><button class="x" type="button" aria-label="Quitar">×</button></span>';
+      const [p,t]=row.querySelectorAll("input"); p.value=it.pieza||""; t.value=it.txt||"";
+      p.addEventListener("input",()=>{S.extra[it.i].pieza=p.value;});
+      t.addEventListener("input",()=>{S.extra[it.i].txt=t.value;});
+      row.querySelector("button").addEventListener("click",()=>{S.extra.splice(it.i,1);renderItems();});
     } else {
-      tr.innerHTML='<td class="money"></td><td></td><td class="num"><input class="price" inputmode="numeric" aria-label="Importe"></td><td><span class="pill r" title="Del odontograma">auto</span></td>';
-      tr.children[0].textContent=it.pieza; tr.children[1].textContent=it.txt;
+      row.innerHTML='<span class="pz"></span><span class="tx"></span><span class="pr"><input class="price" inputmode="numeric" aria-label="Importe"></span><span class="xx"></span>';
+      row.querySelector(".pz").textContent=movil()?"Pieza "+it.pieza:it.pieza;
+      row.querySelector(".tx").textContent=it.txt;
+      const pill=document.createElement("span");pill.className="pill";pill.textContent="auto";pill.title="Del odontograma";row.querySelector(".tx").appendChild(pill);
     }
-    const pr=tr.querySelector("input.price"); pr.value=(it.imp||0).toLocaleString("es-AR");
-    pr.addEventListener("change",()=>{const v=parseMoney(pr.value); if(it.extra)S.extra[it.i].imp=v; else S.precios[it.id]=v; renderItems(); save();});
-    tb.appendChild(tr);
+    const pr=row.querySelector("input.price"); pr.value=(it.imp||0).toLocaleString("es-AR");
+    pr.addEventListener("change",()=>{const v=parseMoney(pr.value); if(it.extra)S.extra[it.i].imp=v; else S.precios[it.id+"|"+it.k]=v; renderItems();});
+    box.appendChild(row);
   });
   $("total").textContent=money(tot);
 }
+function renderAddSel(){
+  const s=$("addSel"); s.innerHTML='<option value="">Elegí una prestación…</option>';
+  ARANCEL_DEF.forEach(([g,list])=>{const og=document.createElement("optgroup");og.label=g;list.forEach(([k,l])=>{const o=document.createElement("option");o.value=k;o.textContent=l+" · "+money(A[k]);og.appendChild(o);});s.appendChild(og);});
+  const o=document.createElement("option");o.value="_otra";o.textContent="Otra (escribirla a mano)";s.appendChild(o);
+}
+$("addSel").addEventListener("change",e=>{
+  const k=e.target.value; if(!k)return;
+  if(k==="_otra") S.extra.push({pieza:"",txt:"",imp:0});
+  else S.extra.push({pieza:"",txt:NOMBRE[k],k,imp:A[k]});
+  e.target.value=""; renderItems();
+  if(k==="_otra"){const ins=$("items").querySelectorAll(".item:last-child input");if(ins[1])ins[1].focus();}
+  $("st").textContent="Prestación agregada.";
+});
 function renderAranceles(){
   const box=$("aranceles"); box.innerHTML="";
-  ARANCEL_DEF.forEach(([k,lab])=>{
-    const d=document.createElement("div"); d.className="field";
-    d.innerHTML='<label for="ar-'+k+'"></label><input id="ar-'+k+'" inputmode="numeric" class="money">';
-    d.querySelector("label").textContent=lab; const inp=d.querySelector("input"); inp.value=A[k].toLocaleString("es-AR");
-    inp.addEventListener("change",()=>{A[k]=parseMoney(inp.value);inp.value=A[k].toLocaleString("es-AR");renderItems();save();});
-    box.appendChild(d);
+  ARANCEL_DEF.forEach(([g,list])=>{
+    const h=document.createElement("h4");h.textContent=g;box.appendChild(h);
+    list.forEach(([k,lab])=>{
+      const d=document.createElement("div"); d.className="arrow";
+      d.innerHTML='<label for="ar-'+k+'"></label><input id="ar-'+k+'" inputmode="numeric">';
+      d.querySelector("label").textContent=lab; const inp=d.querySelector("input"); inp.value=A[k].toLocaleString("es-AR");
+      inp.addEventListener("change",()=>{A[k]=parseMoney(inp.value);inp.value=A[k].toLocaleString("es-AR");save();renderItems();renderAddSel();$("st").textContent="Arancel guardado.";});
+      box.appendChild(d);
+    });
   });
 }
 
 /* ── datos del paciente y del profesional ── */
 const PAC=["pac","hc","fecha","os","afil","obs"], PROF=["prof","mat","cons"];
 function bindFields(){
-  PAC.forEach(k=>{const el=$(k); el.value=S.datos[k]||(k==="fecha"?hoy():""); el.addEventListener("input",()=>{S.datos[k]=el.value;save();});});
+  PAC.forEach(k=>{const el=$(k); el.value=S.datos[k]||""; el.addEventListener("input",()=>{S.datos[k]=el.value;});});
   PROF.forEach(k=>{const el=$(k); el.value=prof[k]||""; el.addEventListener("input",()=>{prof[k]=el.value;save();});});
 }
 
 /* ── exportar ── */
 function fechaTxt(){const v=$("fecha").value; if(!v)return ""; const [y,m,d]=v.split("-"); return d+"/"+m+"/"+y;}
 function resumen(){
-  const L=["🦷 *PRESUPUESTO ODONTOLÓGICO*"];
+  const L=["PRESUPUESTO ODONTOLÓGICO"];
   if($("pac").value.trim())L.push("Paciente: "+$("pac").value.trim());
   if(fechaTxt())L.push("Fecha: "+fechaTxt());
   L.push("");
-  allItems().forEach(it=>L.push("• "+(it.pieza?"Pieza "+it.pieza+": ":"")+it.txt+" — "+money(it.imp)));
-  L.push("","*Total: "+$("total").textContent+"*");
+  allItems().forEach(it=>L.push("- "+(it.pieza?"Pieza "+it.pieza+": ":"")+(it.txt||"Prestación")+" — "+money(it.imp)));
+  L.push("","Total: "+$("total").textContent);
   const p=[$("prof").value.trim(),$("mat").value.trim()].filter(Boolean).join(" · "); if(p)L.push("",p);
   if($("cons").value.trim())L.push($("cons").value.trim());
   return L.join("\n");
 }
-function chartPNG(){
-  // dibuja el odontograma en un canvas con los colores de impresión
-  const css=getComputedStyle(document.documentElement);
+function chartImg(){
   const C={red:"#C9302C",blue:"#1F5FBF",line:"#5E727B",ink:"#13252E"};
   const sz=40,gap=8,mid=24,cols=16,W=cols*(sz+gap)+mid+20,H=4*(sz+26)+30;
   const cv=document.createElement("canvas"),k=2.5; cv.width=W*k; cv.height=H*k; const g=cv.getContext("2d"); g.scale(k,k);
@@ -398,8 +504,8 @@ function chartPNG(){
   let y=10;
   ROWS.forEach(r=>{
     if(r.mid){g.strokeStyle="#C9D5DA";g.beginPath();g.moveTo(10,y+2);g.lineTo(W-10,y+2);g.stroke();y+=8;return;}
-    const all=[r.l,r.r], sup=superior(r.l[0]);
-    all.forEach((arr,i)=>{
+    const sup=superior(r.l[0]);
+    [r.l,r.r].forEach((arr,i)=>{
       arr.forEach((n,j)=>{
         const x=i===0? 10+(8-arr.length+j)*(sz+gap) : 10+8*(sz+gap)+mid+j*(sz+gap);
         const ty=y+(sup?14:0), t=S.teeth[n]||{}, f=t.f||{}, w=t.w||{}, map=caras(n);
@@ -428,13 +534,13 @@ function pdf(){
   const kv=[["Paciente",$("pac").value],["H. clínica",$("hc").value],["Fecha",fechaTxt()],["Obra social",$("os").value],["Afiliado",$("afil").value]];
   kv.forEach(([k,v],i)=>{const cx=M+(i%2)*92, cy=y+Math.floor(i/2)*6; doc.setTextColor(110); doc.text(k,cx,cy); doc.setTextColor(20); doc.text(String(v||"—"),cx+24,cy);});
   y+=Math.ceil(kv.length/2)*6+2;
-  const img=chartPNG(), iw=W-2*M, ih=iw*img.h/img.w; doc.addImage(img.url,"JPEG",M,y,iw,ih); y+=ih+3;
+  const img=chartImg(), iw=W-2*M, ih=iw*img.h/img.w; doc.addImage(img.url,"JPEG",M,y,iw,ih); y+=ih+3;
   doc.setFontSize(8.5); doc.setTextColor(110); doc.text("Rojo: a realizar · Azul: existente o realizado · Notación FDI",M,y); y+=7;
   const obs=$("obs").value.trim(); if(obs){doc.setFontSize(10);doc.setTextColor(20);const ls=doc.splitTextToSize("Observaciones: "+obs,W-2*M);doc.text(ls,M,y);y+=ls.length*5+3;}
   doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.setTextColor(20); doc.text("Presupuesto",M,y); y+=6;
   doc.setFontSize(9); doc.setTextColor(110); doc.text("PIEZA",M,y); doc.text("PRESTACIÓN",M+20,y); doc.text("IMPORTE",W-M,y,{align:"right"}); y+=2; doc.setDrawColor(200); doc.line(M,y,W-M,y); y+=5;
   doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.setTextColor(20);
-  allItems().forEach(it=>{ if(y>275){doc.addPage();y=18;} doc.text(String(it.pieza||"—"),M,y); doc.text(doc.splitTextToSize(it.txt||"",120)[0],M+20,y); doc.text(money(it.imp),W-M,y,{align:"right"}); y+=6.5; });
+  allItems().forEach(it=>{ if(y>275){doc.addPage();y=18;} doc.text(String(it.pieza||"—"),M,y); doc.text(doc.splitTextToSize(it.txt||"Prestación",130)[0],M+20,y); doc.text(money(it.imp),W-M,y,{align:"right"}); y+=6.5; });
   doc.setDrawColor(20); doc.line(M,y-3,W-M,y-3); y+=3; doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text("Total",M,y); doc.text($("total").textContent,W-M,y,{align:"right"});
   y+=22; if(y<270){doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setDrawColor(120);doc.line(W-M-70,y,W-M,y);doc.setTextColor(110);doc.text("Firma y sello del profesional",W-M-35,y+5,{align:"center"});}
   const nombre=($("pac").value.trim()||"paciente").toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi,"-");
@@ -442,17 +548,16 @@ function pdf(){
 }
 
 /* ── eventos ── */
-document.querySelectorAll(".tool").forEach(b=>b.addEventListener("click",()=>{tool=b.dataset.t;document.querySelectorAll(".tool").forEach(x=>x.setAttribute("aria-pressed",x===b));}));
-$("chart").addEventListener("click",e=>{const p=e.target.closest(".s"); if(p)aplicar(+p.dataset.n,p.dataset.c);});
-$("addItem").addEventListener("click",()=>{S.extra.push({pieza:"",txt:"",imp:0});renderItems();save();const ins=$("items").querySelectorAll("tr:last-child input");if(ins[1])ins[1].focus();});
+document.querySelectorAll("#tools .tool").forEach(b=>b.addEventListener("click",()=>{tool=b.dataset.t;document.querySelectorAll("#tools .tool").forEach(x=>x.setAttribute("aria-pressed",x===b));}));
 $("pdf").addEventListener("click",pdf);
-$("wa").addEventListener("click",()=>{const t=resumen(); navigator.clipboard.writeText(t).then(()=>{$("st").textContent="Presupuesto copiado. Pegalo en el chat del paciente.";}).catch(()=>{$("st").textContent="No se pudo copiar automáticamente. Copialo desde acá: "+t.replace(/\*/g,"");});});
+$("copiar").addEventListener("click",()=>{const t=resumen(); navigator.clipboard.writeText(t).then(()=>{$("st").textContent="Presupuesto copiado.";}).catch(()=>{$("st").textContent="No se pudo copiar automáticamente en este navegador.";});});
 $("nuevo").addEventListener("click",()=>{$("confirmBox").hidden=false;});
 $("noNuevo").addEventListener("click",()=>{$("confirmBox").hidden=true;});
-$("siNuevo").addEventListener("click",()=>{S=fresh();S.datos={fecha:hoy()};save();PAC.forEach(k=>$(k).value=S.datos[k]||"");drawChart();renderItems();$("confirmBox").hidden=true;$("st").textContent="Ficha nueva lista.";});
+$("siNuevo").addEventListener("click",()=>{S=fresh();PAC.forEach(k=>$(k).value=S.datos[k]||"");drawChart();renderItems();$("confirmBox").hidden=true;$("st").textContent="Ficha nueva lista.";window.scrollTo({top:0,behavior:"smooth"});});
+let lastMovil=movil(); window.addEventListener("resize",()=>{if(movil()!==lastMovil){lastMovil=movil();renderItems();}});
 
-load(); bindFields(); drawChart(); renderAranceles(); renderItems();
-window.__odonto={S:()=>S,allItems,caras,multirradicular};
+load(); bindFields(); drawChart(); renderAranceles(); renderAddSel(); renderItems();
+window.__odonto={S:()=>S,allItems,A:()=>A};
 })();
 </script>
 </body>
